@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import application.Main;
+import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
@@ -26,7 +27,7 @@ import javafx.stage.Stage;
 import model.entities.Department;
 import model.services.DepartmentService;
 
-public class DepartmentListController implements Initializable{
+public class DepartmentListController implements Initializable, DataChangeListener{
 	
 	private DepartmentService service; //Princípio de injeção de dependência
 	
@@ -92,12 +93,19 @@ public class DepartmentListController implements Initializable{
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			Pane pane = loader.load();
+			
 			//Injetando o Department obj lá no controlador na tela do formulário
 			//Pegando uma referência para o controlador
 			DepartmentFormController controller = loader.getController();
+			
 			//Injetando no controlador, o Department
 			controller.setDepartment(obj);
 			controller.setDepartmentService(new DepartmentService());
+			
+			//Increvo o meu objeto DepartmentListController pra ser um observer do evento
+			//onDataChanged()
+			controller.subscribeDataChangeListener(this);
+			
 			//Pegando o meu controlador e chamando o meu updateFormData()
 			//Para carregar o obj no formulário.
 			controller.updateFormData();
@@ -116,6 +124,14 @@ public class DepartmentListController implements Initializable{
 		catch(IOException e) {
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
+	}
+	
+	//Quando os dados forem alterados, emite uma notificação para que seja atualizar
+	// os dados da tabela department.(Design pattern Observer)
+	@Override
+	public void onDataChanged() {
+		updateTableView();
+		
 	}
 
 }
