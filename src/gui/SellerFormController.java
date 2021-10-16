@@ -1,9 +1,11 @@
 package gui;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -129,7 +131,7 @@ public class SellerFormController implements Initializable {
 
 	}
 
-	// Inserindo dados do meu formulario na tabela
+	// Pega os dados que foram preenchidos no formulário e carrega o objeto (Seller obj) com os dados do formulário
 	private Seller getFormData() {
 		Seller obj = new Seller();
 
@@ -141,9 +143,29 @@ public class SellerFormController implements Initializable {
 		if (txtName.getText() == null || txtName.getText().trim().equals("")) {
 			exception.addError("name", "Field can´t be empty");
 		}
-
 		obj.setName(txtName.getText());
-
+		
+		if (txtEmail.getText() == null || txtEmail.getText().trim().equals("")) {
+			exception.addError("email", "Field can´t be empty");
+		}
+		obj.setEmail(txtEmail.getText());
+		
+		//Pegando a data de nascimento que esta no Datepicker
+		if(dpBirthDate.getValue() == null) {
+			exception.addError("birthDate", "Field can´t be empty");
+		}else {
+				Instant instant = Instant.from(dpBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+				obj.setBirthDate(Date.from(instant));
+		}
+		
+		//Testando se o salário é nulo ou vazio
+		if (txtBaseSalary.getText() == null || txtBaseSalary.getText().trim().equals("")) {
+			exception.addError("baseSalary", "Field can´t be empty");
+		}
+		obj.setBaseSalary(Utils.tryParseToDouble(txtBaseSalary.getText()));
+		
+		obj.setDepartment(comboBoxDepartment.getValue());
+			
 		// Procuro na minha coleção de erros se há algum erro correspondente
 		// Caso haja, lanço o erro de exeção
 		if (exception.getErrors().size() > 0) {
@@ -207,12 +229,15 @@ public class SellerFormController implements Initializable {
 		comboBoxDepartment.setItems(obsList);
 	}
 
+	//Testa cada um dos possíveis erros 
 	private void setErrorMessages(Map<String, String> errors) {
 		Set<String> fields = errors.keySet(); // Conjunto dos campos
 
-		if (fields.contains("name")) {
-			labelErrorName.setText(errors.get("name"));
-		}
+		labelErrorName.setText((fields.contains("name") ? errors.get("name") : ""));
+		labelErrorEmail.setText((fields.contains("email") ? errors.get("email") : ""));
+		labelErrorBirthDate.setText((fields.contains("birthDate") ? errors.get("birthDate") : ""));
+		labelErrorBaseSalary.setText((fields.contains("baseSalary") ? errors.get("baseSalary") : ""));
+		
 	}
 
 	//Este método inicializa o comboBox
