@@ -1,6 +1,7 @@
 package gui;
 
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -41,6 +42,15 @@ public class SellerListController implements Initializable, DataChangeListener {
 															// que eu dou para ela (tableColumnId)
 	@FXML
 	private TableColumn<Seller, String> tableColumnName;// (Refere-se a coluna do name)
+	
+	@FXML
+	private TableColumn<Seller, Seller> tableColumnEmail;
+	
+	@FXML
+	private TableColumn<Seller, Date> tableColumnBirthDate;
+	
+	@FXML
+	private TableColumn<Seller, Double> tableColumnBaseSalary;
 
 	@FXML
 	private TableColumn<Seller, Seller> tableColumnEDIT;
@@ -80,6 +90,11 @@ public class SellerListController implements Initializable, DataChangeListener {
 		// das minhas colunas na tabela
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
+		tableColumnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+		tableColumnBirthDate.setCellValueFactory(new PropertyValueFactory<>("birthDate"));
+		Utils.formatTableColumnDate(tableColumnBirthDate, "dd/MM/yyyy");
+		tableColumnBaseSalary.setCellValueFactory(new PropertyValueFactory<>("baseSalary"));
+		Utils.formatTableColumnDouble(tableColumnBaseSalary, 2);
 
 		// Para fazer a área dos dados da tabela chegrem até o fim da minha janela do
 		// aplicativo
